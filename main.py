@@ -15,9 +15,9 @@ option = st.radio(
     "Modo de operación:",
     [
         "Placa Plana (Convección)",
-        "Flujo Externo Cilindros",
-        "Flujo Interno Cilindros",
-        "Conducción 1D"  # Nueva opción
+        "Flujo Externo Cilindros (Convección)",
+        "Flujo Interno Cilindros (Convección)",
+        "Conducción Unidimensional"  
     ],
     horizontal=True,
     index=None
