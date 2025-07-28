@@ -1,12 +1,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Toolbox de Transferencia de Calor",
+    page_title="Calculadora de Transferencia de Calor",
     layout="wide",
     page_icon="🔥"
 )
 
-st.title("🔥 Toolbox de Transferencia de Calor")
+st.title("🔥 Calculadora de Transferencia de Calor")
 st.markdown("""
 Seleccione el modo de análisis:
 """)
