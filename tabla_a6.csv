@@ -1,0 +1,26 @@
+Material,Conductividad térmica (W/m·K),Densidad (kg/m³),Calor específico (kJ/kg·K)
+Fibra mineral (roca/escoria/vidrio),-,4.8-32,0.71-0.96
+Vidrio celular,0.055,-,1.0
+Fibra de vidrio (ligamento orgánico),0.036,-,0.96
+Poliestireno expandido (bolitas moldeadas),0.040,-,1.2
+Poliuretano expandido (R-11 expandido),0.023,-,1.6
+Perlita expandida (ligamento orgánico),0.052,-,1.26
+Caucho expandido (rígido),0.032,-,1.68
+Fibra mineral con aglomerante de resina,0.042,-,0.71
+Corcho,0.039,-,1.80
+Espuma de poliuretano,0.023-0.026,-,-
+Fibra de vidrio,0.038-0.039,-,-
+Uretano (mezcla de dos partes),0.026,-,1.045
+Lana mineral con aglomerantes,0.046,-,-
+Aerogel de sílice,0.025,-,-
+Vermiculita (expandida),0.068,-,-
+Perlita (expandida),0.039-0.045,-,1.09
+Aserrín o virutas,0.065,-,1.38
+Aislamiento celulósico (papel molido),0.039-0.046,-,-
+Vidrio celular,0.058,144,1.0
+Preformado (sobre tablero),-,13,1.0
+Preformado (sobre tablero),-,25,2.1
+Preformado (sobre tablero),-,50,3.9
+Polvo sílice (al vacío),0.0017,-,-
+Hoja de aluminio + vidrio esponjoso (10-12 capas),0.00016,-,-
+Hoja de aluminio + laminado (75-150 capas),0.000017,-,-

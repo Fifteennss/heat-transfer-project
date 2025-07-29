@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from math import pi, log
+from io import StringIO
 
 # --- Conversión de unidades (se mantiene igual) ---
 def convertir_temperatura(valor, unidad_origen, unidad_destino):
@@ -192,6 +193,95 @@ try:
     st.subheader("5. Transferencia de calor")
     st.latex(rf"q = h \cdot A \cdot \Delta T_{{ml}} = {h:.2f} \times {A:.4f} \times {TML:.2f} = {q:.2f} \, \text{{W}}")
     st.success(f"**Transferencia de calor total:** {q:.2f} W")
+    
+    # --- EXPORTACIÓN A TXT ---
+    st.subheader("Exportar Resultados")
+
+    def crear_txt_resultados():
+        """Función para crear el archivo TXT con todos los datos y resultados"""
+        
+        output = StringIO()
+        
+        # Encabezado
+        output.write("="*80 + "\n")
+        output.write("ANÁLISIS DE CONVECCIÓN INTERNA FORZADA EN TUBOS\n")
+        output.write("="*80 + "\n\n")
+        
+        # Datos de entrada
+        output.write("DATOS DE ENTRADA:\n")
+        output.write("-"*50 + "\n")
+        output.write(f"Fluido seleccionado:           {fluido}\n")
+        if tiene_fases:
+            output.write(f"Fase del fluido:               {fase}\n")
+        output.write(f"Temperatura de entrada:        {T_entrada:.2f} °C\n")
+        output.write(f"Temperatura de salida:         {T_salida:.2f} °C\n")
+        output.write(f"Temperatura de pared:          {T_pared:.2f} °C\n")
+        output.write(f"Velocidad del fluido:          {velocidad:.4f} m/s\n")
+        output.write(f"Diámetro interno del tubo:     {diametro:.6f} m\n")
+        output.write(f"Longitud del tubo:             {longitud:.4f} m\n")
+        output.write(f"Régimen térmico:               {regimen_termico}\n")
+        output.write(f"\nSistema de unidades usado:     Temp=°C, Vel=m/s, Long=m\n")
+        output.write("\n")
+        
+        # Temperaturas características
+        output.write("TEMPERATURAS CARACTERÍSTICAS:\n")
+        output.write("-"*50 + "\n")
+        output.write(f"Temperatura de película:       {T_pelicula:.4f} °C\n")
+        output.write(f"Temperatura media logarítmica: {TML:.4f} °C\n")
+        output.write("\n")
+        
+        # Propiedades termofísicas
+        output.write("PROPIEDADES TERMOFÍSICAS (a temperatura de película):\n")
+        output.write("-"*50 + "\n")
+        output.write(f"Densidad (ρ):                  {props['densidad']:.6f} kg/m³\n")
+        output.write(f"Viscosidad dinámica (μ):       {props['viscosidad']:.6e} kg/m·s\n")
+        output.write(f"Conductividad térmica (k):     {props['k']:.6f} W/m·K\n")
+        output.write(f"Número de Prandtl (Pr):        {props['Pr']:.6f}\n")
+        output.write("\n")
+        
+        # Análisis dimensional
+        output.write("ANÁLISIS DIMENSIONAL:\n")
+        output.write("-"*50 + "\n")
+        output.write(f"Número de Reynolds:            {Re:.2f}\n")
+        output.write(f"Régimen de flujo:              {regimen}\n")
+        output.write(f"Número de Nusselt:             {Nu:.4f}\n")
+        output.write("\n")
+        
+        # Resultados del análisis
+        output.write("RESULTADOS DEL ANÁLISIS:\n")
+        output.write("-"*50 + "\n")
+        output.write(f"Coeficiente de transferencia:  {h:.4f} W/m²·K\n")
+        output.write(f"Área de transferencia:         {A:.6f} m²\n")
+        output.write(f"Transferencia de calor total:  {q:.4f} W\n")
+        
+        # Información adicional
+        if Re < 2300:
+            output.write(f"\nCorrelación utilizada:         Nu = 3.66 (flujo laminar desarrollado)\n")
+        else:
+            output.write(f"\nCorrelación utilizada:         Nu = 0.023 × Re^0.8 × Pr^{n} (Dittus-Boelter)\n")
+            output.write(f"Exponente n utilizado:         {n} ({'calentamiento' if n == 0.4 else 'enfriamiento'})\n")
+        
+        output.write("\n")
+        output.write("="*80 + "\n")
+        output.write("Fin del reporte - Convección Interna Forzada\n")
+        output.write("="*80 + "\n")
+        
+        return output.getvalue()
+
+    # Botón para descargar TXT
+    txt_data = crear_txt_resultados()
+
+    st.download_button(
+        label="📥 Descargar resultados en TXT",
+        data=txt_data,
+        file_name=f"reporte_conveccion_{fluido.replace(' ', '_')}_{regimen.lower()}.txt",
+        mime="text/plain",
+        help="Descarga un archivo TXT con todos los datos de entrada, propiedades termofísicas y resultados del análisis"
+    )
+
+    # Mostrar vista previa del TXT
+    with st.expander("Vista previa del archivo TXT"):
+        st.text(txt_data)
 
 except Exception as e:
     st.error(f"Error en los cálculos: {str(e)}")

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from math import pi
+from io import StringIO
 
 # --- Configuración de la página ---
 st.set_page_config(
@@ -289,3 +290,96 @@ cols[0].latex(rf"A = \pi \cdot D \cdot L = \pi \cdot {diametro:.4f} \cdot {longi
 cols[1].latex(rf"\Delta T = {T_superficie:.1f} - {T_fluido:.1f} = {T_superficie - T_fluido:.1f}°C")
 cols[2].latex(rf"q = h \cdot A \cdot \Delta T = {h:.2f} \cdot {A:.4f} \cdot {T_superficie - T_fluido:.1f}")
 st.success(f"## 🔥 Transferencia de calor: {q:.2f} W")
+
+# --- EXPORTACIÓN A TXT ---
+st.subheader("Exportar Resultados")
+
+def crear_txt_resultados():
+    """Función para crear el archivo TXT con todos los datos y resultados"""
+    
+    output = StringIO()
+    
+    # Encabezado
+    output.write("="*80 + "\n")
+    output.write("ANÁLISIS DE CONVECCIÓN EXTERNA EN CILINDROS\n")
+    output.write("="*80 + "\n\n")
+    
+    # Datos de entrada
+    output.write("DATOS DE ENTRADA:\n")
+    output.write("-"*50 + "\n")
+    output.write(f"Fluido seleccionado:           {fluido}\n")
+    if 'Densidad líquido (kg/m³)' in datos[fluido].columns:
+        output.write(f"Fase del fluido:               {fase}\n")
+    else:
+        output.write(f"Fase del fluido:               Monofásico\n")
+    output.write(f"Temperatura del fluido:        {T_fluido_input:.2f} {unidad_temp}\n")
+    output.write(f"Temperatura de superficie:     {T_superficie_input:.2f} {unidad_temp}\n")
+    output.write(f"Velocidad del fluido:          {velocidad_input:.2f} {unidad_vel}\n")
+    output.write(f"Diámetro del cilindro:         {diametro_input:.4f} {unidad_dia}\n")
+    output.write(f"Longitud del cilindro:         {longitud_input:.4f} {unidad_long}\n")
+    output.write(f"Correlación utilizada:         {correlacion}\n")
+    output.write(f"\nSistema de unidades usado:     Temp={unidad_temp}, Vel={unidad_vel}, Diám={unidad_dia}, Long={unidad_long}\n")
+    output.write("\n")
+    
+    # Propiedades del fluido
+    output.write("PROPIEDADES DEL FLUIDO:\n")
+    output.write("-"*50 + "\n")
+    output.write(f"Temperatura de película:       {T_pelicula:.2f} °C\n")
+    output.write(f"Densidad:                      {props['densidad']:.2f} kg/m³\n")
+    output.write(f"Viscosidad dinámica:           {props['viscosidad']:.6e} kg/m·s\n")
+    output.write(f"Conductividad térmica:         {props['k']:.6f} W/m·K\n")
+    output.write(f"Número de Prandtl:             {props['Pr']:.6f}\n")
+    output.write(f"Calor específico:              {props['cp']:.1f} J/kg·K\n")
+    output.write("\n")
+    
+    # Números adimensionales
+    output.write("NÚMEROS ADIMENSIONALES:\n")
+    output.write("-"*50 + "\n")
+    output.write(f"Número de Reynolds:            {Re:.2f}\n")
+    output.write(f"Número de Prandtl:             {props['Pr']:.6f}\n")
+    output.write("\n")
+    
+    # Resultados del análisis
+    output.write("RESULTADOS DEL ANÁLISIS:\n")
+    output.write("-"*50 + "\n")
+    Nu = h * diametro / props['k']
+    output.write(f"Correlación utilizada:         {correlacion}\n")
+    output.write(f"Número de Nusselt:             {Nu:.6f}\n")
+    output.write(f"Coeficiente de convección:     {h:.6f} W/m²·K\n")
+    output.write(f"Área de transferencia:         {A:.6f} m²\n")
+    output.write(f"Diferencia de temperatura:     {T_superficie - T_fluido:.2f} °C\n")
+    output.write(f"Transferencia de calor:        {q:.6f} W\n")
+    output.write("\n")
+    
+    # Validación de correlaciones
+    output.write("VALIDACIÓN:\n")
+    output.write("-"*50 + "\n")
+    if correlacion == 'Completa (Churchill-Bernstein)':
+        if props['Pr'] > 0.2:
+            output.write("✓ Correlación Churchill-Bernstein válida (Pr > 0.2)\n")
+        else:
+            output.write("⚠ Correlación Churchill-Bernstein no válida (Pr ≤ 0.2)\n")
+    else:
+        output.write("✓ Correlación compacta utilizada\n")
+    
+    output.write("\n")
+    output.write("="*80 + "\n")
+    output.write("Fin del reporte\n")
+    output.write("="*80 + "\n")
+    
+    return output.getvalue()
+
+# Botón para descargar TXT
+txt_data = crear_txt_resultados()
+
+st.download_button(
+    label="📥 Descargar resultados en TXT",
+    data=txt_data,
+    file_name=f"reporte_cilindro_{fluido.replace(' ', '_')}_{correlacion.split()[0]}.txt",
+    mime="text/plain",
+    help="Descarga un archivo TXT con todos los datos de entrada, propiedades del fluido y resultados del análisis"
+)
+
+# Mostrar vista previa del TXT
+with st.expander("Vista previa del archivo TXT"):
+    st.text(txt_data)
