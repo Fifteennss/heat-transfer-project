@@ -25,13 +25,13 @@ option = st.radio(
 
 if option:
     if option == "Placa Plana (Convección)":
-        st.switch_page("pages/paraflow.py")
+        st.switch_page("pages/flujo_paralelo_placa_plana.py")
     elif option == "Flujo Externo Cilindros":
-        st.switch_page("pages/exterflow.py")
+        st.switch_page("pages/flujo_externo_cilindro.py")
     elif option == "Flujo Interno Cilindros":
-        st.switch_page("pages/interflow.py")
+        st.switch_page("pages/flujo_interno_cilindro.py")
     elif option == "Conducción 1D":
-        st.switch_page("pages/conduc.py")  # Nuevo módulo
+        st.switch_page("pages/conduccion_unidimensional.py")  
 else:
     st.info("Seleccione una opción del menú superior")
 
