@@ -381,9 +381,16 @@ if modo == "Flujo de calor promedio":
 elif modo == "Flujo de calor local":
     st.markdown("### Análisis Local")
     
-    x = st.number_input("Posición sobre la placa (x en m)", 
-                       min_value=0.0001, max_value=L, value=0.05, step=0.001,
-                       help="Distancia desde el borde de ataque de la placa")
+    # Calcular un valor por defecto apropiado para x en la unidad seleccionada
+    valor_defecto_x_unidad = min(0.05, L_input * 0.1, L_input * 0.9)
+    valor_defecto_x_unidad = max(0.0001, min(valor_defecto_x_unidad, L_input))
+
+    x_input = st.number_input(
+        f"Posición sobre la placa (x en {unidad_longitud})",
+        min_value=0.0001, max_value=L_input, value=valor_defecto_x_unidad, step=0.001,
+        help=f"Distancia desde el borde de ataque de la placa en {unidad_longitud}"
+    )
+    x = convertir_longitud(x_input, unidad_longitud)  # Convertir a metros para cálculos
     
     # Cálculo del Reynolds local considerando corrección por presión si aplica
     if fluido == "aire (tabla_a15.csv)" and diferente_presion:
@@ -566,7 +573,10 @@ def crear_txt_resultados():
                 
         elif resultados.get("tipo_analisis") == "Flujo de calor local":
             output.write("Tipo de análisis: FLUJO DE CALOR LOCAL\n\n")
-            output.write(f"Posición analizada (x):        {resultados['posicion_x']:.6f} m\n")
+            # Mostrar posición analizada en la unidad seleccionada y en metros
+            x_val_m = resultados['posicion_x']
+            x_val_unidad = x_val_m / {"m":1.0, "cm":0.01, "mm":0.001, "in":0.0254, "ft":0.3048}[unidad_longitud]
+            output.write(f"Posición analizada (x):        {x_val_unidad:.6f} {unidad_longitud} ({x_val_m:.6f} m)\n")
             output.write(f"Reynolds local:                {resultados['reynolds_local']:.0f}\n")
             output.write(f"Régimen local:                 {resultados['regimen_local']}\n")
             output.write(f"Número de Nusselt local:       {resultados['numero_nusselt_local']:.6f}\n")
