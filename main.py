@@ -11,27 +11,23 @@ st.markdown("""
 Seleccione el modo de análisis:
 """)
 
+# Mapeo de opciones a páginas
+page_mapping = {
+    "Placa Plana (Convección)": "pages/flujo_paralelo_placa_plana.py",
+    "Flujo Externo Cilindros (Convección)": "pages/flujo_externo_cilindro.py",
+    "Flujo Interno Cilindros (Convección)": "pages/flujo_interno_cilindro.py",
+    "Conducción Unidimensional": "pages/conduccion_unidimensional.py"
+}
+
 option = st.radio(
     "Modo de operación:",
-    [
-        "Placa Plana (Convección)",
-        "Flujo Externo Cilindros (Convección)",
-        "Flujo Interno Cilindros (Convección)",
-        "Conducción Unidimensional"  
-    ],
+    list(page_mapping.keys()),
     horizontal=True,
     index=None
 )
 
 if option:
-    if option == "Placa Plana (Convección)":
-        st.switch_page("pages/flujo_paralelo_placa_plana.py")
-    elif option == "Flujo Externo Cilindros":
-        st.switch_page("pages/flujo_externo_cilindro.py")
-    elif option == "Flujo Interno Cilindros":
-        st.switch_page("pages/flujo_interno_cilindro.py")
-    elif option == "Conducción 1D":
-        st.switch_page("pages/conduccion_unidimensional.py")  
+    st.switch_page(page_mapping[option])  
 else:
     st.info("Seleccione una opción del menú superior")
 
